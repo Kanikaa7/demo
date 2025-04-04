@@ -1,6 +1,13 @@
 from flask import Flask, request, jsonify
 from smolagents import Tool, tool, OpenAIServerModel, CodeAgent
-from typing import List
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Now access the key like this
+api_key = os.getenv("GEMINI_API_KEY")
 
 class TransactionQueryTool(Tool):
     name = "object_query_tool"
@@ -44,8 +51,6 @@ class TransactionQueryTool(Tool):
 # Step 4: Create an instance of the tool
 object_query_tool = TransactionQueryTool()
 
-api_key = "AIzaSyDORL2Gmic46k0F_Z46cKnhB07e5PT1aVE" # Replace with your secret name
-
 # Specify the model, which will leverage the api_key we just got
 model=OpenAIServerModel(
     model_id="gemini-2.0-flash-exp",
@@ -74,7 +79,6 @@ app = Flask(__name__)
 @app.route('/process-data', methods=['POST'])
 def process_data():
     data = request.get_json()  # Receive data from Spring Boot
-
     if not data:
         return jsonify({"error": "No data received"}), 400
 
